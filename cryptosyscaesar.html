@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="css.css">
+<style>
+
+</style>
+</head>
+<body>
+
+<h1>Caeser Cipher
+</h1>
+<p><b>Ceaser Cipher is an one of the stream cipher in cyptography , Which uses 25alphabtes as a numberical format in encyption and decryption.</b></p>
+<h3>Encryption : CipherText = (Plaintext+key)%26</h3>
+<h3>Decryption : Plaintext= (Ciphertext-key)%26</h3>
+<div class="sha">
+<h2>Input
+</h2>
+<form name ="cc">
+<table>
+<tr>
+<td class="loc">
+Plain
+</td>
+<td>
+<input type="text" name="word">
+</td>
+</tr>
+<tr>
+<td class="loc">
+Key
+</td>
+<td>
+<input type="text" name="key">
+</td>
+</tr>
+<tr>
+<td class="loc">
+Cipher
+</td>
+<td>
+<input type="text" name="cipher">
+</td>
+</tr>
+</table>
+
+<input type="button" onclick="encrypt()" value="Encrypt">
+<input type="button" onclick="dec()" value="Decrypt">
+<input type="button" onclick="brute()" value="BruteForce">
+<input type="button" onclick="freqAnalysis()" value="Frequency analysis">
+<h2>Steps</h2>
+
+<textarea name="steps" disabled="disabled">
+</textarea>
+</form>
+<p></p>
+<p id="step"></p>
+</div>
+</div>
+</body>
+<script>
+function encrypt()
+{
+var w=cc.word.value;
+w=w.toLowerCase();
+var w2="";var res="";
+var res1="";
+var k=cc.key.value;
+if(w==""||k=="")
+{
+alert("Plain and Key Fields are required");
+}
+else
+{
+var key=parseInt(k);
+var i;var x;var y;var g;
+var cip="";
+for(i=0;i<w.length;i++)
+{
+if(w.charAt(i)!=' ')
+w2=w2+w.charAt(i);
+}
+for(i=0;i<w2.length;i++)
+{
+x=w2.charCodeAt(i)-97;
+res=res+""+w2.charAt(i)+"\t\t"+x+"\n";
+x=x+key;
+y=x;
+x=x%26;
+res1=res1+y+"\t\t\t"+x+"\t\t"+String.fromCharCode(x+97)+"\n";
+x=x+97;
+g=String.fromCharCode(x);
+cip=cip+g;
+}
+cc.steps.value="First convert the alphabets to numerials : \n\n"+"Plaintext\tcorresponding numerial\n"+res+"\nNow add the key value to the converted numerials and take 26 modulus\nNow convert them to alphabets :\n\n"+"After addition\t\tAfter mod\tLetter\n"+res1+"\n\nAnd the result is : \n\ncipher : "+cip;
+}
+}
+
+function freqAnalysis()
+{
+var hc;
+var ct=cc.cipher.value;
+ct=ct.trim();
+ct=ct.toUpperCase();
+var pt=cc.word.value;
+pt=pt.trim();
+pt=pt.toLowerCase();
+var arr1="";
+var a2="";
+var i=0,j=0,k=0,cnt=0,temp=0,max=0,temp1=0,m=0,ind=0,temp2=0,tempE=0;
+arr1=ct.charAt(i);
+cnt++;
+k++;
+for(i=1;i<ct.length;i++)                {
+for(j=i-1;j>=0&&arr1[j]!=ct.charAt(i)&&ct.charAt(i)!=' ';j--)
+{}
+if(j==-1)
+{
+arr1=arr1+ct.charAt(i);
+k++;
+cnt++;
+}
+}
+var num=new Array(cnt);
+for(i=0;i<cnt;i++)
+{
+temp=0;
+for(j=0;j<ct.length;j++)
+{
+if(ct.charAt(j)!=' ')
+{
+if(arr1.charAt(i)==ct.charAt(j))
+{
+temp++;
+}
+}
+}
+num[i]=temp;
+}
+for(i=0;i<cnt;i++)                {
+max=num[i];
+for(j=i;j>=0;j--)
+{
+if(max<num[j])
+max=num[j];
+}
+}
+for(i=0;i<cnt;i++)
+{
+if(max==num[i])
+temp1++;
+}	
+cc.steps.value=cc.steps.value+"\n"+"\nFREQUENCY ANALYSIS\n";
+cc.steps.value=cc.steps.value+"\nHighly Frequent characters:\n";
+for(i=0;i<cnt;i++)
+{
+if(max==num[i])
+{
+a2=a2+arr1.charAt(i);
+cc.steps.value=cc.steps.value+"\n\'"+arr1.charAt(i)+"\' has occurred "+num[i]+" times";
+}
+}	
+cc.steps.value=cc.steps.value+"\n\nHighly occurred character(s) need to be replaced by the high frequency alphabets e,t,a,o,i,n one by one to find the plain text and key.\n";
+var index=new Array(ct.length);
+var pt1=new Array(ct.length);
+var pt2="";
+for(i=0;i<ct.length;i++)                {
+index[i]=parseInt(ct.charCodeAt(i)-65);
+}
+var freq="ETAOIN";
+var freqNo=[4,19,0,14,8,13];
+var maxPoss=parseInt(temp1*6);
+var PlainText=new Array(maxPoss);
+for(j=0;j<temp1;j++)
+{
+pt2="";
+for(m=0;m<6;m++)
+{
+tempE=parseInt(freq.charCodeAt(m)-65);
+temp2=parseInt(a2.charCodeAt(j)-freq.charCodeAt(m));
+temp2=temp2%26;
+while(temp2<0)
+temp2=temp2+26;
+for(i=0;i<ct.length;i++)
+{
+pt1[i]=parseInt(index[i]-temp2);
+pt1[i]=pt1[i]%26;
+while(pt1[i]<0)
+{
+pt1[i]=parseInt(pt1[i]+26);
+}
+pt1[i]=parseInt(pt1[i]+97);
+if(ct.charAt(i)!=' ')
+pt2=pt2+String.fromCharCode(pt1[i]);
+else if(ct.charAt(i)==' ')
+pt2=pt2+' ';
+}
+PlainText[ind]=pt2;
+ind++;
+pt2="";
+}
+}
+i=0;
+for(j=0;j<temp1;j++)
+{
+for(m=0;m<6;m++)
+{
+temp=parseInt((a2.charCodeAt(j)-65)-(freq.charCodeAt(m)-65));
+temp=temp%26;
+while(temp<0)
+temp=temp+26;
+cc.steps.value=cc.steps.value+"\n"+a2.charAt(j)+"-"+freq.charAt(m)+": "+(a2.charCodeAt(j)-65)+"-"+(freq.charCodeAt(m)-65)+" mod 26 ="+temp;
+cc.steps.value=cc.steps.value+"\n"+"Replacing "+a2[j]+" by "+freq[m]+": "+PlainText[i]+"\n\n";
+if(PlainText[i]==pt)
+hc=temp;
+i++;
+}
+}
+cc.steps.value=cc.steps.value+"Key "+hc;
+}
+function dec()
+{
+var res="";
+var res1="";
+var wd=cc.cipher.value;
+wd=wd.toLowerCase();
+var ky=cc.key.value;
+if(wd==""||ky=="")
+{
+alert("Key and Cipher Fields are required");
+}
+else
+{
+var key1=parseInt(ky);
+var i;var x1;
+var y1;var g1;
+var pl="";
+for(i=0;i<wd.length;i++)
+{
+x1=wd.charCodeAt(i)-97;
+res=res+""+wd.charAt(i)+"\t\t"+x1+"\n";
+x1=x1-key1;
+y1=x1;
+if(x1<0)
+x1=x1+26;
+
+x1=x1%26;
+res1=res1+y1+"\t\t\t\t"+x1+"\t\t"+String.fromCharCode(x1+97)+"\n";
+x1=x1+97;
+g1=String.fromCharCode(x1);
+pl=pl+g1;
+}
+cc.steps.value="First convert the alphabets to numerials : \n\n"+"Ciphertext\tcorresponding numerial\n"+res+"\nNow add the key value to the converted numerials and take 26 modulus\nNow convert them to alphabets :\n\n"+"After substraction\t\tAfter mod\tLetter\n"+res1+"\n\nAnd the result is : \n\nPlain text : "+pl;
+}
+}
+function brute()
+{
+var pl=cc.word.value;
+var ci=cc.cipher.value;
+var pl2="";var k=55;
+if(pl==""||ci=="")
+{
+alert("Cipher and Plain Fields are required");
+}
+else if(pl.length!=ci.length)
+alert("Give proper input");
+else
+{
+pl=pl.toLowerCase();
+ci=ci.toLowerCase();
+var i;var j;var g1;var x1;var res="Key\t\tText\n\n";
+for(i=0;i<26;i++)
+{
+for(j=0;j<ci.length;j++)
+{
+x1=ci.charCodeAt(j)-97;
+x1=x1-i;
+if(x1<0)
+x1=x1+26;
+x1=x1%26;
+x1=x1+97;
+g1=String.fromCharCode(x1);
+pl2=pl2+g1;
+}
+res=res+i+"\t\t"+pl2+"\n";
+if(pl2==pl)
+{
+k=i;
+}
+pl2="";
+}
+if(k==55)
+cc.steps.value="In the brute force try all the possible key values \n\n\n"+res+"\n"+"key value not found mismatch in cipher and plain texts";
+
+else
+cc.steps.value="In the brute force try all the possible key values \n\n\n"+res+"\n"+"key : "+k;
+}
+}
+</script> 
+</html>
